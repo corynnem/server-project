@@ -5,7 +5,7 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 // const { user } = require("./controllers")
-const { stravacontroller} = require('./controllers')
+const { stravacontroller } = require('./controllers')
 const { validate, cors } = require("./middleware");
 
 app.use(Express.json());
@@ -62,10 +62,10 @@ app.get("/test", (req, res) => {
 
 
 
-app.use('strava', stravacontroller)
 
 app.use("/static", Express.static("node_modules"));
 
+app.use('/strava', stravacontroller)
 
 
 
