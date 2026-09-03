@@ -27,7 +27,7 @@ const options = {
         url: "http://localhost:8888",
       },
       {
-        url: "https://task-database-app.herokuapp.com/",
+        url: "https://server-project-z99g.onrender.com/",
       },
     ]
   },
@@ -62,10 +62,7 @@ app.get("/test", (req, res) => {
 
 
 
-// app.use(validate);
-// app.use("/7372", task);
-
-app.use('/strava', stravacontroller)
+app.use('strava', stravacontroller)
 
 app.use("/static", Express.static("node_modules"));
 

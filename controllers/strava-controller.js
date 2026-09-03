@@ -13,7 +13,7 @@ let stravacontroller
   *     summary: Kicks off Strava OAuth. The iOS app opens this URL in an
   *              ASWebAuthenticationSession — it never sees client_id or
   *              Strava's authorize URL directly.
-  *     tags: [Task]
+  *     tags: [Strava]
   *     responses:
   *       302:
   *         description: "Redirects to Strava's login/consent screen"
@@ -37,7 +37,7 @@ let stravacontroller
   *     summary: Strava redirects here after user login/consent with ?code=...
   *              Server exchanges the code for a token, then redirects back
   *              into the app via its custom URL scheme.
-  *     tags: [Task]
+  *     tags: [Strava]
   *     responses:
   *       302:
   *         description: "Redirects to omataapp://com.omata.app/strava with token or error"
