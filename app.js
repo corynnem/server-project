@@ -36,7 +36,7 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 app.use(
-  "/api-docs",
+  "/",
   swaggerUi.serve,
   swaggerUi.setup(specs, { 
     // explorer: true 
@@ -60,10 +60,6 @@ app.get("/test", (req, res) => {
   });
 });
 
-
-app.get('/', (req, res) => {
-  res.redirect('/api-docs')
-})
 
 
 app.use("/static", Express.static("node_modules"));
