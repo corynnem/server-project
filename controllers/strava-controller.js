@@ -1,11 +1,14 @@
 const { Router } = require('express');
+const multer = require('multer');
 
 
 let stravacontroller
  = Router();
 
+ const upload = multer();
+
  const { stravaService } = require('../services');
- const { exchangeCodeForToken } = stravaService;
+ const { exchangeCodeForToken, uploadActivity } = stravaService;
 
  /**
   * @swagger
@@ -66,37 +69,49 @@ let stravacontroller
  * @swagger
  * /strava/upload:
  *   post:
- *     summary: Omata user who is logged into Strava can upload their Omata rides to Strava
- *     tags: [Task]
- *     security: 
+ *     summary: Uploads an Omata activity (.fit file) to Strava on behalf of
+ *              the logged-in athlete. Requires the athlete's Strava access
+ *              token (from /strava/callback) as a Bearer token.
+ *     tags: [Strava]
+ *     security:
  *       - Strava OAuth: []
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/Task'
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *               name:
+ *                 type: string
  *     responses:
  *       200:
- *         description: "updated successfully" 
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Task'
+ *         description: "uploaded successfully"
  *       409:
- *         description: 'required fields missing, Task not found, or Task is unauthorized to edit'
+ *         description: 'required fields missing (file, name, or Authorization header)'
  *       500:
- *         description: 'failed to update Task'
+ *         description: 'failed to upload activity to Strava'
  */
 
 
-stravacontroller.post('/upload', async (req, res) => {
-  const { _vars } = req.body;
+stravacontroller.post('/upload', upload.single('file'), async (req, res) => {
+  const { name } = req.body || {};
+  const accessToken = req.headers.authorization?.replace(/^Bearer\s+/i, '');
+
+  if (!req.file || !name || !accessToken) {
+    return res.status(409).json({
+      message: "required fields missing",
+    });
+  }
 
   try {
-    // Strava upload
-
+    const activity = await uploadActivity(accessToken, req.file.buffer, name);
+    res.json(activity);
   } catch (e) {
+    console.error('Strava upload failed:', e.response?.data || e.message);
     res.status(500).json({
       message: "Failed to upload ride to Strava",
     });

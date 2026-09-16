@@ -2,6 +2,7 @@
 // Strava OAuth: token exchange + refresh.
 
 const axios = require('axios');
+const FormData = require('form-data');
 
 // These names match exactly what Strava's API settings dashboard calls
 // them: "Client ID" and "Client Secret".
@@ -39,8 +40,31 @@ async function refreshAccessToken(refreshToken) {
   return response.data;
 }
 
+/**
+ * Uploads an activity file (e.g. .fit) to Strava on behalf of an athlete.
+ * Mirrors OAuthSwift's postMultiPartRequest to Strava's uploads endpoint.
+ */
+async function uploadActivity(accessToken, fileBuffer, name) {
+  const form = new FormData();
+  form.append('file', fileBuffer, {
+    filename: 'activity.fit',
+    contentType: 'application/octet-stream',
+  });
+  form.append('data_type', 'fit');
+  form.append('name', name);
+
+  const response = await axios.post('https://www.strava.com/api/v3/uploads', form, {
+    headers: {
+      ...form.getHeaders(),
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return response.data;
+}
+
 module.exports = {
   STRAVA_CONFIG,
   exchangeCodeForToken,
   refreshAccessToken,
+  uploadActivity,
 };
