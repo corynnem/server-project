@@ -20,9 +20,6 @@ let stravacontroller
   */
  stravacontroller.get('/authorize', (req, res) => {
 
-  res.send({
-    message: "you win"
-  })
    const params = new URLSearchParams({
      client_id: process.env.STRAVA_CLIENT_ID,
      redirect_uri: `${process.env.SERVER_BASE_URL}/strava/callback`,
