@@ -4,7 +4,8 @@ const { Router } = require('express');
 let stravacontroller
  = Router();
 
- const { exchangeCodeForToken } = require('../services');
+ const { stravaService } = require('../services');
+ const { exchangeCodeForToken } = stravaService;
 
  /**
   * @swagger
