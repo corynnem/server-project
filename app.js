@@ -27,7 +27,7 @@ const options = {
         url: "http://localhost:8888",
       },
       {
-        url: "https://server-project-z99g.onrender.com/",
+        url: "https://https://server-project-silk.vercel.app/",
       },
     ]
   },
@@ -61,6 +61,9 @@ app.get("/test", (req, res) => {
 });
 
 
+app.get('/', (req, res) => {
+  res.redirect('/api-docs')
+})
 
 
 app.use("/static", Express.static("node_modules"));
