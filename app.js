@@ -36,10 +36,10 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 app.use(
-  "/",
+  "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(specs, { 
-    // explorer: true 
+  swaggerUi.setup(specs, {
+    // explorer: true
   })
 );
 
@@ -59,6 +59,10 @@ app.get("/test", (req, res) => {
     message: "test endpoint successful!",
   });
 });
+
+app.get('/', (req, res) => {
+  res.redirect('/api-docs')
+})
 
 
 
