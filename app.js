@@ -4,8 +4,8 @@ const app = Express();
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
-// const { user } = require("./controllers")
-const { stravacontroller } = require('./controllers')
+
+const { stravacontroller, komootcontroller } = require('./controllers')
 const { validate, cors } = require("./middleware");
 
 app.use(Express.json());
@@ -15,9 +15,9 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Project and Task API",
+      title: "Omata Activity Sync Proxy API",
       description:
-        "This is an API designed for employers to assign teams, projects, tasks and give feedback to their employees. Application has 2 levels of authentication, Employers must be created first, and they can create Employee accounts and assign them to projects and tasks.",
+        "Proxy server that handles the Strava and Komoot OAuth handshakes and activity uploads on behalf of the Omata iOS app, so the app never has to hold either provider's client secret.",
       contact: {
         name: "Corynne Moody",
       },
@@ -27,9 +27,27 @@ const options = {
         url: "http://localhost:8888",
       },
       {
-        url: "https://https://server-project-silk.vercel.app/",
+        url: "https://server-project-silk.vercel.app",
       },
-    ]
+    ],
+    components: {
+      securitySchemes: {
+        StravaOAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "Strava access token",
+          description:
+            "Strava access token returned to the app via /strava/callback.",
+        },
+        KomootOAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "Komoot access token",
+          description:
+            "Komoot access token returned to the app via /komoot/callback.",
+        },
+      },
+    },
   },
   apis: ["*.js", "./controllers/*.js", "./models/*.js"],
 };
@@ -45,6 +63,22 @@ app.use(
 
 /**
  * @swagger
+ * /:
+ *   get:
+ *     summary: Redirects to the Swagger API docs.
+ *     tags: [Tests]
+ *     responses:
+ *       302:
+ *         description: "Redirects to /api-docs"
+ */
+app.get('/', (req, res) => {
+  res.redirect('/api-docs')
+})
+
+app.use("/static", Express.static("node_modules"));
+
+/**
+ * @swagger
  * /test:
  *   get:
  *     summary: returns a successful request if hit
@@ -53,22 +87,15 @@ app.use(
  *       200:
  *         description: returns "test endpoint successful!"
  */
-
 app.get("/test", (req, res) => {
   res.json({
     message: "test endpoint successful!",
   });
 });
 
-app.get('/', (req, res) => {
-  res.redirect('/api-docs')
-})
-
-
-
-app.use("/static", Express.static("node_modules"));
 
 app.use('/strava', stravacontroller)
+app.use('/komoot', komootcontroller)
 
 
 

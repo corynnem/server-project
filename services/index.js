@@ -1,4 +1,4 @@
 module.exports = {
-    stravaService: require("./stravaservice")
-    
+    stravaService: require("./stravaservice"),
+    komootService: require("./komootservice"),
  }
