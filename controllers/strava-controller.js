@@ -74,7 +74,7 @@ let stravacontroller
  *              token (from /strava/callback) as a Bearer token.
  *     tags: [Strava]
  *     security:
- *       - Strava OAuth: []
+ *       - StravaOAuth: []
  *     requestBody:
  *       required: true
  *       content:
